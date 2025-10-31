@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>User Dashboard</h2>
+<p>Welcome, {{ user.FirstName }}!</p>
+<p>Approved Recipes: <strong>{{ user.get('numApproved', 0) }}</strong> | Rejected Recipes: <strong>{{ user.get('numRejected', 0) }}</strong></p>
+
+<div class="card">
+    <div class="card-body">
+        <h5 class="card-title">Submit a New Recipe</h5>
+        {% if has_rejected %}
+            <p class="text-danger">You must fix your rejected recipes before submitting a new one.</p>
+            <a href="#rejected" class="btn btn-warning disabled">Submit New Recipe (Blocked)</a>
+        {% else %}
+            <p>Ready to submit a new recipe?</p>
+            <a href="{{ url_for('add_recipe') }}" class="btn btn-primary">Submit New Recipe</a>
+        {% endif %}
+    </div>
+</div>
+
+<hr id="rejected">
+
+<h4>Rejected Recipes</h4>
+{% if rejected_recipes %}
+    <p>You have {{ rejected_recipes|length }} rejected recipe(s). Please modify and resubmit.</p>
+    {% for recipe in rejected_recipes %}
+    <div class="card border-danger">
+        <div class="card-body">
+            <h5 class="card-title">Recipe (ID: {{ recipe.recipeID }})</h5>
+            <p>Status: <span class="badge bg-danger">{{ recipe.status }}</span></p>
+            <a href="{{ url_for('edit_rejected_recipe', recipe_id=recipe.id) }}" class="btn btn-warning">Modify Recipe</a>
+        </div>
+    </div>
+    {% endfor %}
+{% else %}
+    <p>You have no rejected recipes. Great job!</p>
+{% endif %}
+{% endblock %}

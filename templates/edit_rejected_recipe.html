@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Modify Rejected Recipe (ID: {{ recipe.recipeID }})</h2>
+<p>Make your changes below and resubmit for review.</p>
+
+<div class="card border-warning">
+    <div class="card-body">
+        <form method="POST" action="{{ url_for('edit_rejected_recipe', recipe_id=recipe.id) }}">
+            <div class="mb-3">
+                <label for="price" class="form-label">Price ($)</label>
+                <input type="number" step="0.01" class="form-control" id="price" name="price" value="{{ recipe.price }}" readonly>
+                <small class="form-text text-muted">Price cannot be changed after submission.</small>
+            </div>
+            <div class="mb-3 form-check">
+                <input type="checkbox" class="form-check-input" id="is_vegan" name="is_vegan" value="true" {% if recipe.is_vegan %}checked{% endif %}>
+                <label class="form-check-label" for="is_vegan">Is this recipe vegan?</label>
+            </div>
+            <div class="mb-3">
+                <label for="ingredients" class="form-label">Ingredients (Hold Ctrl/Cmd to select multiple)</label>
+                <select multiple class="form-select" id="ingredients" name="ingredients" size="10" required>
+                    {% for ingredient in all_ingredients %}
+                    <option value="{{ ingredient.id }}" {% if ingredient.id in current_ingredient_ids %}selected{% endif %}>
+                        {{ ingredient.Ingredient }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <button type="submit" class="btn btn-warning">Resubmit Recipe</button>
+            <a href="{{ url_for('user_dashboard') }}" class="btn btn-secondary">Cancel</a>
+        </form>
+    </div>
+</div>
+{% endblock %}

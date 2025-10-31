@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Reviewer Dashboard</h2>
+<p>Welcome, {{ reviewer.FirstName }}!</p>
+
+<div class="card">
+    <div class="card-body">
+        <h5 class="card-title">Add New Ingredient</h5>
+        <form method="POST" action="{{ url_for('add_ingredient') }}" class="d-flex">
+            <input type="text" class="form-control me-2" name="ingredient_name" placeholder="e.g., Flour" required>
+            <button type="submit" class="btn btn-success">Add</button>
+        </form>
+        <hr>
+        <h6>Existing Ingredients:</h6>
+        <ul class="list-group" style="max-height: 150px; overflow-y: auto;">
+            {% for ingredient in all_ingredients %}
+            <li class="list-group-item py-1">{{ ingredient.Ingredient }}</li>
+            {% else %}
+            <li class="list-group-item py-1">No ingredients added yet.</li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
+
+<h4>Your Current Assignment</h4>
+{% if has_in_progress and in_progress_recipe %}
+    <div class="card border-primary">
+        <div class="card-header">Status: In Progress</div>
+        <div class="card-body">
+            <h5 class="card-title">Reviewing Recipe (ID: {{ in_progress_recipe.recipeID }})</h5>
+            <ul class="list-group list-group-flush mb-3">
+                <li class="list-group-item">Price: ${{ "%.2f"|format(in_progress_recipe.price) }}</li>
+                <li class="list-group-item">Vegan: {% if in_progress_recipe.is_vegan %}Yes{% else %}No{% endif %}</li>
+            </ul>
+            
+            <form method="POST" action="{{ url_for('review_recipe', recipe_id=in_progress_recipe.id) }}" class="d-flex justify-content-start">
+                <button type="submit" name="action" value="approve" class="btn btn-success me-2">Approve</button>
+                <button type="submit" name="action" value="reject" class="btn btn-danger">Reject</button>
+            </form>
+        </div>
+    </div>
+{% else %}
+    <p>You have no recipes currently in progress.</p>
+{% endif %}
+
+<h4>Unassigned Recipes Queue</h4>
+{% if not has_in_progress %}
+    {% if unassigned_recipes %}
+        <div class="list-group">
+            {% for recipe in unassigned_recipes %}
+            <div class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                <div>
+                    <strong>Recipe (ID: {{ recipe.recipeID }})</strong>
+                    <br>
+                    <small>Price: ${{ "%.2f"|format(recipe.price) }} | Vegan: {% if recipe.is_vegan %}Yes{% else %}No{% endif %}</small>
+                </div>
+                <a href="{{ url_for('assign_recipe', recipe_id=recipe.id) }}" class="btn btn-primary btn-sm">Assign to Me</a>
+            </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p>There are no unassigned recipes. Good job!</p>
+    {% endif %}
+{% else %}
+    <p class="text-muted">You must complete your current assignment before taking a new one.</p>
+{% endif %}
+
+{% endblock %}
