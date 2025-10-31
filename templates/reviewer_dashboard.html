@@ -29,8 +29,11 @@
         <div class="card-body">
             <h5 class="card-title">Reviewing Recipe (ID: {{ in_progress_recipe.recipeID }})</h5>
             <ul class="list-group list-group-flush mb-3">
-                <li class="list-group-item">Price: ${{ "%.2f"|format(in_progress_recipe.price) }}</li>
+                <li class="list-group-item">Base Price: ${{ "%.2f"|format(in_progress_recipe.price) }}</li>
+                <li class="list-group-item">2x Price: ${{ "%.2f"|format(in_progress_recipe.price_2x) }}</li>
+                <li class="list-group-item">3x Price: ${{ "%.2f"|format(in_progress_recipe.price_3x) }}</li>
                 <li class="list-group-item">Vegan: {% if in_progress_recipe.is_vegan %}Yes{% else %}No{% endif %}</li>
+                <li class="list-group-item">Ingredients: {{ in_progress_recipe['Ingredient (from ingredients)'] | join(', ') }}</li>
             </ul>
             
             <form method="POST" action="{{ url_for('review_recipe', recipe_id=in_progress_recipe.id) }}" class="d-flex justify-content-start">
